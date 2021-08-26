@@ -10,11 +10,7 @@ buildscript {
 
 plugins {
 
-    id "org.springframework.boot" version "2.3.4.RELEASE"
-    id "io.spring.dependency-management" version "1.0.10.RELEASE"
     id "java"
-    id "groovy"
-    id "org.sonarqube" version "3.0"
 }
 
 group = "com.bisa"
@@ -33,9 +29,6 @@ repositories {
 }
 
 dependencies {
-
-
-    annotationProcessor "org.projectlombok:lombok"
 
     testImplementation group: "com.intuit.karate", name: "karate-apache", version: "0.9.6"
     testImplementation group: "com.intuit.karate", name: "karate-junit4", version: "1.1.0"
@@ -91,27 +84,6 @@ task localReport() {
 
 }
 
-bootJar {
-
-    layered()
-
-}
-
-jar {
-
-    manifest {
-
-        attributes "Main-Class": "com.bisa.automation.Application"
-
-    }
-
-    from {
-
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-
-    }
-
-}
 
 test {
 
@@ -121,16 +93,6 @@ test {
     systemProperty "karate.env", System.properties.getProperty("karate.env")
     // ensure tests are always run
     outputs.upToDateWhen { false }
-
-}
-
-task unitTest(type: Copy) {
-
-    dependsOn test
-    from("build/reports/unitTest/")
-    include "index.html"
-    destinationDir file("build/reports/")
-    rename "index.html", "unit-test-report.html"
 
 }
 
