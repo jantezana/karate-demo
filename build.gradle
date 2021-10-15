@@ -13,7 +13,7 @@ plugins {
     id "java"
 }
 
-group = "com.bisa"
+
 version = "1.0.1"
 sourceCompatibility = "11"
 def name = "automation"
@@ -22,9 +22,7 @@ def profile = "dev"
 repositories {
 
     mavenCentral()
-    flatDir {
-        dirs "libs"
-    }
+    
 
 }
 
@@ -51,39 +49,6 @@ configurations {
 
 }
 
-task acceptanceTest() {
-
-    dependsOn assemble, testClasses
-    doLast {
-
-        javaexec {
-
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ["--plugin", "json:build/reports/cucumber/report.json", "--plugin", "html:build/reports/cucumber/acceptance-test-report.html", "--glue", "steps", "src/test/resources/cucumber"]
-
-        }
-
-    }
-
-}
-
-task localReport() {
-
-    dependsOn classes, compileTestJava
-    doLast {
-
-        javaexec {
-
-            classpath = sourceSets.test.runtimeClasspath
-            main = "reports.LocalReport"
-
-        }
-
-    }
-
-}
-
 
 test {
 
@@ -96,25 +61,3 @@ test {
 
 }
 
-sourceSets {
-    testintegration {
-        java.srcDir "$projectDir/src/testintegration/java"
-        resources.srcDir "$projectDir/src/testintegration/resources"
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-    }
-}
-
-configurations {
-    testintegrationImplementation.extendsFrom testImplementation
-    testintegrationRuntime.extendsFrom testRuntime
-}
-
-task integrationTest(type: Test) {
-    useJUnitPlatform()
-    reports.html.destination = file("$buildDir/reports/integrationTest")
-    testClassesDirs = sourceSets.testintegration.output.classesDirs
-    classpath = sourceSets.testintegration.runtimeClasspath
-}
-
-check.dependsOn integrationTest
